@@ -20,27 +20,30 @@ import { init } from '@/core/init';
 
 import './styles.css';
 
+// Внутренний компонент корневого элемента
+// Здесь происходит основная настройка приложения
 function RootInner({ children }: PropsWithChildren) {
   const isDev = process.env.NODE_ENV === 'development';
 
-  // Mock Telegram environment in development mode if needed.
+  // Эмулируем окружение Telegram в режиме разработки
   if (isDev) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     useTelegramMock();
   }
 
+  // Получаем параметры запуска и проверяем режим отладки
   const lp = useLaunchParams();
   const debug = isDev || lp.startParam === 'debug';
 
-  // Initialize the library.
+  // Инициализируем библиотеку при первом рендере на клиенте
   useClientOnce(() => {
     init(debug);
   });
 
+  // Получаем текущую тему и данные пользователя
   const isDark = useSignal(miniApp.isDark);
   const initDataUser = useSignal(initData.user);
 
-  // Set the user locale.
+  // Устанавливаем локаль пользователя
   useEffect(() => {
     initDataUser && setLocale(initDataUser.languageCode);
   }, [initDataUser]);
@@ -57,10 +60,11 @@ function RootInner({ children }: PropsWithChildren) {
   );
 }
 
+// Корневой компонент приложения
+// Обрабатывает начальную загрузку и ошибки
 export function Root(props: PropsWithChildren) {
-  // Unfortunately, Telegram Mini Apps does not allow us to use all features of
-  // the Server Side Rendering. That's why we are showing loader on the server
-  // side.
+  // Показываем загрузку на серверной стороне
+  // т.к. Telegram Mini Apps не поддерживает полноценный SSR
   const didMount = useDidMount();
 
   return didMount ? (

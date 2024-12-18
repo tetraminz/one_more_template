@@ -4,6 +4,11 @@ import { type LinkProps as NextLinkProps, default as NextLink } from 'next/link'
 
 import './styles.css';
 
+/**
+ * Компонент для создания ссылок
+ * Поддерживает как внутренние, так и внешние ссылки
+ * Внешние ссылки открываются через Telegram API
+ */
 export interface LinkProps extends NextLinkProps, Omit<JSX.IntrinsicElements['a'], 'href'> {
 }
 
@@ -16,8 +21,7 @@ export const Link: FC<LinkProps> = ({
   const onClick = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     propsOnClick?.(e);
 
-    // Compute if target path is external. In this case we would like to open link using
-    // TMA method.
+    // Определяем, является ли ссылка внешней
     let path: string;
     if (typeof href === 'string') {
       path = href;
@@ -31,6 +35,7 @@ export const Link: FC<LinkProps> = ({
     const isExternal = targetUrl.protocol !== currentUrl.protocol
       || targetUrl.host !== currentUrl.host;
 
+    // Если ссылка внешняя - открываем через Telegram API
     if (isExternal) {
       e.preventDefault();
       openLink(targetUrl.toString());

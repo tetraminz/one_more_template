@@ -9,31 +9,36 @@ import {
 } from '@telegram-apps/sdk-react';
 
 /**
- * Initializes the application and configures its dependencies.
+ * Инициализация приложения и настройка всех зависимостей
+ * @param debug - флаг режима отладки
  */
 export function init(debug: boolean): void {
-  // Set @telegram-apps/sdk-react debug mode.
+  // Включаем режим отладки SDK если необходимо
   $debug.set(debug);
 
-  // Initialize special event handlers for Telegram Desktop, Android, iOS, etc.
-  // Also, configure the package.
+  // Инициализируем SDK для работы с Telegram
   initSDK();
 
-  // Mount all components used in the project.
+  // Подключаем все необходимые компоненты Telegram
+  // - Кнопка "Назад"
+  // - Мини-приложение
+  // - Параметры темы
+  // - Данные инициализации
+  // - Область просмотра
   backButton.isSupported() && backButton.mount();
   miniApp.mount();
   themeParams.mount();
   initData.restore();
   void viewport.mount().catch(e => {
-    console.error('Something went wrong mounting the viewport', e);
+    console.error('Ошибка при монтировании viewport', e);
   });
 
-  // Define components-related CSS variables.
+  // Привязываем CSS переменные для компонентов
   viewport.bindCssVars();
   miniApp.bindCssVars();
   themeParams.bindCssVars();
 
-  // Add Eruda if needed.
+  // Подключаем отладчик Eruda в режиме разработки
   debug && import('eruda')
     .then((lib) => lib.default.init())
     .catch(console.error);

@@ -9,12 +9,17 @@ import '@telegram-apps/telegram-ui/dist/styles.css';
 import 'normalize.css/normalize.css';
 import './_assets/globals.css';
 
+// Метаданные приложения - здесь можно настроить заголовок и описание вашего приложения
 export const metadata: Metadata = {
   title: 'Your Application Title Goes Here',
   description: 'Your application description goes here',
 };
 
+// Корневой layout приложения
+// Оборачивает все страницы в необходимые провайдеры (i18n для мультиязычности)
+// children - содержимое текущей страницы
 export default async function RootLayout({ children }: PropsWithChildren) {
+  // Получаем текущую локаль пользователя
   const locale = await getLocale();
 
   return (

@@ -8,9 +8,15 @@ import { localesMap } from '@/core/i18n/config';
 import { setLocale } from '@/core/i18n/locale';
 import { Locale } from '@/core/i18n/types';
 
+/**
+ * Компонент для переключения языка приложения
+ * Отображает выпадающий список с доступными языками
+ */
 export const LocaleSwitcher: FC = () => {
+  // Получаем текущую локаль
   const locale = useLocale();
 
+  // Обработчик смены языка
   const onChange = (value: string) => {
     const locale = value as Locale;
     setLocale(locale);

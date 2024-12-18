@@ -1,4 +1,3 @@
-//use server is required
 "use server";
 
 import { cookies } from "next/headers";
@@ -6,14 +5,21 @@ import { cookies } from "next/headers";
 import { defaultLocale } from "./config";
 import type { Locale } from "./types";
 
-// In this example the locale is read from a cookie. You could alternatively
-// also read it from a database, backend service, or any other source.
+// Имя куки для хранения текущей локали
 const COOKIE_NAME = "NEXT_LOCALE";
 
+/**
+ * Получает текущую локаль из куки
+ * Если локаль не установлена - возвращает локаль по умолчанию
+ */
 const getLocale = async () => {
   return cookies().get(COOKIE_NAME)?.value || defaultLocale;
 };
 
+/**
+ * Устанавливает новую локаль в куки
+ * @param locale - новая локаль
+ */
 const setLocale = async (locale?: string) => {
   cookies().set(COOKIE_NAME, locale as Locale || defaultLocale);
 };

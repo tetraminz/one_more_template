@@ -5,7 +5,12 @@ import {
   type PropsWithChildren,
 } from 'react';
 
+/**
+ * Компонент для обработки ошибок в приложении
+ * Перехватывает ошибки рендеринга и отображает fallback компонент
+ */
 export interface ErrorBoundaryProps extends PropsWithChildren {
+  // Компонент для отображения при ошибке
   fallback: ComponentType<{ error: Error }>;
 }
 
@@ -16,9 +21,10 @@ interface ErrorBoundaryState {
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = {};
 
-  // eslint-disable-next-line max-len
+  // Обновляем состояние при возникновении ошибки
   static getDerivedStateFromError: GetDerivedStateFromError<ErrorBoundaryProps, ErrorBoundaryState> = (error) => ({ error });
 
+  // Логируем ошибку
   componentDidCatch(error: Error) {
     this.setState({ error });
   }
@@ -34,6 +40,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       },
     } = this;
 
+    // Если есть ошибка - показываем fallback, иначе рендерим детей
     return error ? <Fallback error={error}/> : children;
   }
 }

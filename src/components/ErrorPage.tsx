@@ -1,5 +1,9 @@
 import { useEffect } from 'react';
 
+/**
+ * Страница отображения ошибки
+ * Показывает сообщение об ошибке и кнопку для повторной попытки
+ */
 export function ErrorPage({
   error,
   reset,
@@ -7,20 +11,21 @@ export function ErrorPage({
   error: Error & { digest?: string }
   reset?: () => void
 }) {
+  // Логируем ошибку при монтировании компонента
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error(error);
   }, [error]);
 
   return (
     <div>
-      <h2>An unhandled error occurred!</h2>
+      <h2>Произошла непредвиденная ошибка!</h2>
       <blockquote>
         <code>
           {error.message}
         </code>
       </blockquote>
-      {reset && <button onClick={() => reset()}>Try again</button>}
+      {/* Кнопка для повторной попытки, если доступна */}
+      {reset && <button onClick={() => reset()}>Попробовать снова</button>}
     </div>
   );
 }

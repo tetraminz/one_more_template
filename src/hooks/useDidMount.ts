@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 
 /**
- * @return True, if component was mounted.
+ * Хук, который возвращает true после первого рендера компонента
+ * Используется для определения, выполняется ли код на клиенте
+ * 
+ * @returns boolean - true если компонент смонтирован
  */
 export function useDidMount(): boolean {
   const [didMount, setDidMount] = useState(false);
