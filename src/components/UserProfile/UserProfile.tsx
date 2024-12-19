@@ -1,60 +1,65 @@
 'use client';
 
-import { 
-  useSignal, 
-  initData, 
-  miniApp, 
-  haptic, 
-  showAlert, 
-  showConfirm 
+import {
+  useSignal,
+  initData,
+  miniApp,
+  mainButton,
 } from '@telegram-apps/sdk-react';
-import { 
-  Avatar, 
-  Button, 
-  Cell, 
-  List, 
-  Section, 
-  Switch 
-} from '@telegram-apps/telegram-ui';
+import { List } from '@telegram-apps/telegram-ui';
 import { useState } from 'react';
 
+import { UserInfo } from './components/UserInfo';
+import { UserSettings } from './components/UserSettings';
+import { UserActions } from './components/UserActions';
+
 /**
- * Компонент профиля пользователя
- * Демонстрирует различные возможности Telegram SDK и UI компонентов
+ * Основной компонент профиля пользователя
+ * Объединяет все подкомпоненты и управляет состоянием
  */
 export function UserProfile() {
   // Получаем данные пользователя из Telegram SDK
   const user = useSignal(initData.user);
-  
+
   // Получаем текущую тему
   const isDark = useSignal(miniApp.isDark);
-  
+
   // Локальное состояние для демонстрации
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   // Обработчик нажатия на аватар
   const handleAvatarClick = () => {
-    // Вызываем тактильный отклик
-    haptic.impact('medium');
-    
-    // Показываем алерт с информацией
-    showAlert({
-      title: 'Информация',
-      message: `Имя пользователя: ${user?.username || 'Не указано'}`,
+    // Используем методы из mainButton
+    mainButton.setParams({
+      text: `@${user?.username || 'Нет username'}`,
+      isVisible: true, // Исправлено с is_visible на isVisible
     });
+    setTimeout(() => {
+      mainButton.setParams({ isVisible: false }); // Исправлено с is_visible на isVisible
+    }, 2000);
   };
 
   // Обработчик включения уведомлений
-  const handleNotificationsToggle = async () => {
-    const confirmed = await showConfirm({
-      title: 'Уведомления',
-      message: 'Вы хотите изменить настройки уведомлений?',
+  const handleNotificationsToggle = () => {
+    setNotificationsEnabled(!notificationsEnabled);
+    mainButton.setParams({
+      text: notificationsEnabled ? 'Уведомления выключены' : 'Уведомления включены',
+      isVisible: true, // Исправлено с is_visible на isVisible
     });
+    setTimeout(() => {
+      mainButton.setParams({ isVisible: false }); // Исправлено с is_visible на isVisible
+    }, 2000);
+  };
 
-    if (confirmed) {
-      setNotificationsEnabled(!notificationsEnabled);
-      haptic.notification(notificationsEnabled ? 'error' : 'success');
-    }
+  // Обработчик проверки премиум статуса
+  const handleCheckPremium = () => {
+    mainButton.setParams({
+      text: user?.isPremium ? 'У вас есть Telegram Premium!' : 'У вас нет Telegram Premium',
+      isVisible: true, // Исправлено с is_visible на isVisible
+    });
+    setTimeout(() => {
+      mainButton.setParams({ isVisible: false }); // Исправлено с is_visible на isVisible
+    }, 2000);
   };
 
   if (!user) {
@@ -62,61 +67,22 @@ export function UserProfile() {
   }
 
   return (
-    <List>
-      {/* Секция с основной информацией */}
-      <Section header="Профиль пользователя">
-        <Cell
-          before={
-            <Avatar
-              size={48}
-              src={user.photoUrl}
-              onClick={handleAvatarClick}
-              style={{ cursor: 'pointer' }}
-            />
-          }
-          subtitle={`ID: ${user.id}`}
-        >
-          {user.firstName} {user.lastName}
-        </Cell>
-      </Section>
+      <List>
+        <UserInfo
+            user={user}
+            onAvatarClick={handleAvatarClick}
+        />
 
-      {/* Секция с настройками */}
-      <Section header="Настройки">
-        <Cell
-          after={
-            <Switch
-              checked={notificationsEnabled}
-              onChange={handleNotificationsToggle}
-            />
-          }
-        >
-          Уведомления
-        </Cell>
-        
-        <Cell multiline>
-          Текущая тема: {isDark ? 'Тёмная' : 'Светлая'}
-        </Cell>
-      </Section>
+        <UserSettings
+            isDark={isDark}
+            notificationsEnabled={notificationsEnabled}
+            onNotificationsToggle={handleNotificationsToggle}
+        />
 
-      {/* Секция с действиями */}
-      <Section>
-        <Cell>
-          <Button
-            stretched
-            onClick={() => {
-              haptic.impact('light');
-              showAlert({
-                title: 'Премиум статус',
-                message: user.isPremium 
-                  ? 'У вас есть Telegram Premium!' 
-                  : 'У вас нет Telegram Premium',
-              });
-            }}
-          >
-            Проверить Premium статус
-          </Button>
-        </Cell>
-      </Section>
-    </List>
+        <UserActions
+            user={user}
+            onCheckPremium={handleCheckPremium}
+        />
+      </List>
   );
 }

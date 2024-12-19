@@ -27,6 +27,7 @@ function RootInner({ children }: PropsWithChildren) {
 
   // Эмулируем окружение Telegram в режиме разработки
   if (isDev) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useTelegramMock();
   }
 
